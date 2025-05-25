@@ -160,10 +160,8 @@ async function seedDatabase() {
   try {
     await dbConnect();
 
-    // Clear existing events
     await Event.deleteMany({});
 
-    // Insert sample events
     await Event.insertMany(sampleEvents);
 
     console.log('Database seeded successfully!');
@@ -174,7 +172,6 @@ async function seedDatabase() {
   }
 }
 
-// Run if called directly
 if (require.main === module) {
   seedDatabase();
 }
