@@ -138,11 +138,6 @@ export default function HomePage() {
                   : `No events found for "${searchInfo.term}"`
                 }
               </p>
-              {searchInfo.hasResults && (
-                <p className="text-blue-600 text-sm mt-1">
-                  Results include matches in titles, descriptions, organizer details, requirements, and more.
-                </p>
-              )}
             </div>
           </div>
         )}
