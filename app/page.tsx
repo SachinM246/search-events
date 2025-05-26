@@ -21,7 +21,7 @@ export default function HomePage() {
         setLoading(true);
       }
 
-      console.log('Fetching events for:', search);
+      //console.log('Fetching events for:', search);
       const url = search
         ? `/api/events?search=${encodeURIComponent(search)}`
         : '/api/events';
