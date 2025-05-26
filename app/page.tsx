@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { IEvent } from '@/models/Event';
 import EventCard from '@/components/EventCard';
 import SearchBar from '@/components/SearchBar';
@@ -11,26 +11,13 @@ export default function HomePage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [searchLoading, setSearchLoading] = useState(false);
+  const [hasInitialLoaded, setHasInitialLoaded] = useState(false);
 
-  useEffect(() => {
-    const debounce = setTimeout(() => {
-      if (searchTerm !== '') {
-        fetchEvents(searchTerm);
-      }
-    }, 300);
-
-    return () => clearTimeout(debounce);
-  }, [searchTerm]);
-
-  useEffect(() => {
-    fetchEvents();
-  }, []);
-
-  const fetchEvents = async (search = '') => {
+  const fetchEvents = useCallback(async (search = '') => {
     try {
       if (search) {
         setSearchLoading(true);
-      } else {
+      } else if (!hasInitialLoaded) {
         setLoading(true);
       }
 
@@ -45,6 +32,9 @@ export default function HomePage() {
       if (response.ok) {
         setEvents(data.events || []);
         setError('');
+        if (!hasInitialLoaded) {
+          setHasInitialLoaded(true);
+        }
       } else {
         setError(data.error || 'Failed to fetch events');
         setEvents([]);
@@ -57,15 +47,25 @@ export default function HomePage() {
       setLoading(false);
       setSearchLoading(false);
     }
-  };
+  }, [hasInitialLoaded]);
 
-  const handleSearch = (term: string) => {
+  useEffect(() => {
+    if (!hasInitialLoaded) return;
+
+    const debounce = setTimeout(() => {
+      fetchEvents(searchTerm);
+    }, 300);
+
+    return () => clearTimeout(debounce);
+  }, [searchTerm, fetchEvents, hasInitialLoaded]);
+
+  useEffect(() => {
+    fetchEvents();
+  }, [fetchEvents]);
+
+  const handleSearch = useCallback((term: string) => {
     setSearchTerm(term);
-
-    if (term === '') {
-      fetchEvents();
-    }
-  };
+  }, []);
 
   const searchInfo = useMemo(() => {
     if (!searchTerm) return null;
@@ -77,7 +77,7 @@ export default function HomePage() {
     };
   }, [events.length, searchTerm]);
 
-  if (loading) {
+  if (loading && !hasInitialLoaded) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -88,7 +88,7 @@ export default function HomePage() {
     );
   }
 
-  if (error) {
+  if (error && !hasInitialLoaded) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
@@ -117,7 +117,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <SearchBar onSearch={handleSearch} />
+          <SearchBar onSearch={handleSearch} initialValue={searchTerm} />
 
           {searchLoading && (
             <div className="flex items-center justify-center mt-4">

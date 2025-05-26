@@ -1,13 +1,18 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 interface SearchBarProps {
     onSearch: (term: string) => void;
+    initialValue?: string;
 }
 
-export default function SearchBar({ onSearch }: SearchBarProps) {
-    const [searchTerm, setSearchTerm] = useState('');
+export default function SearchBar({ onSearch, initialValue = '' }: SearchBarProps) {
+    const [searchTerm, setSearchTerm] = useState(initialValue);
+
+    useEffect(() => {
+        setSearchTerm(initialValue);
+    }, [initialValue]);
 
     const handleClear = () => {
         setSearchTerm('');
@@ -17,6 +22,12 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
         onSearch(searchTerm);
+    };
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        onSearch(value);
     };
 
     return (
@@ -32,9 +43,9 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
                     <input
                         type="text"
                         value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
+                        onChange={handleInputChange}
                         className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-lg leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-gray-900"
-                        placeholder="Search events by name, type, location, or organizer..."
+                        placeholder="Search events by name, type, location, organizer, or spots remaining..."
                         autoComplete="off"
                     />
 
@@ -44,6 +55,7 @@ export default function SearchBar({ onSearch }: SearchBarProps) {
                                 type="button"
                                 onClick={handleClear}
                                 className="h-5 w-5 text-gray-400 hover:text-gray-600 focus:outline-none"
+                                title="Clear search"
                             >
                                 <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
