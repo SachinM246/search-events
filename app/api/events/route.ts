@@ -4,18 +4,18 @@ import Event from '@/models/Event';
 
 export async function GET(req: NextRequest) {
   try {
-    console.log('Connecting to MongoDB...');
+    //console.log('Connecting to MongoDB...');
     await dbConnect();
-    console.log('Connected to MongoDB');
+    //console.log('Connected to MongoDB');
 
     const { searchParams } = new URL(req.url);
     const search = searchParams.get('search');
-    console.log('Search query:', search);
+    // console.log('Search query:', search);
 
     let events;
 
     if (search) {
-      console.log('Performing deep search...');
+      //console.log('Performing deep search...');
 
       const searchRegex = new RegExp(search, 'i');
 
@@ -23,9 +23,9 @@ export async function GET(req: NextRequest) {
 
       const searchQuery = {
         $or: [
-          { name: searchRegex },        
+          { name: searchRegex },
           { type: searchRegex },
-          { address: searchRegex },     
+          { address: searchRegex },
           { organizer: searchRegex },
 
           { description: searchRegex },
@@ -68,7 +68,7 @@ export async function GET(req: NextRequest) {
         ]
       };
 
-      console.log('Search query:', JSON.stringify(searchQuery, null, 2));
+      //console.log('Search query:', JSON.stringify(searchQuery, null, 2));
 
       events = await Event.find(searchQuery).sort({ date: 1 });
 
@@ -104,7 +104,7 @@ export async function GET(req: NextRequest) {
             if (spotsB === searchNumber) scoreB += 7;
           }
 
-          return scoreB - scoreA; 
+          return scoreB - scoreA;
         });
       }
 
