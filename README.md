@@ -1,5 +1,3 @@
-# Deep Search Functionality Documentation
-
 ## Overview
 The search functionality in this application allows users to perform comprehensive searches across various event attributes, including text-based fields and numerical comparisons.
 
