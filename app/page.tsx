@@ -1,34 +1,39 @@
-// app/page.tsx
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { IEvent } from '@/models/Event';
 import EventCard from '@/components/EventCard';
 import SearchBar from '@/components/SearchBar';
 
 export default function HomePage() {
   const [events, setEvents] = useState<IEvent[]>([]);
-  const [filteredEvents, setFilteredEvents] = useState<IEvent[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [searchLoading, setSearchLoading] = useState(false);
 
   useEffect(() => {
     const debounce = setTimeout(() => {
-      fetchEvents(searchTerm);
+      if (searchTerm !== '') {
+        fetchEvents(searchTerm);
+      }
     }, 300);
 
     return () => clearTimeout(debounce);
   }, [searchTerm]);
 
-  // ✅ Initial fetch on mount
   useEffect(() => {
     fetchEvents();
   }, []);
 
   const fetchEvents = async (search = '') => {
     try {
-      setLoading(true);
+      if (search) {
+        setSearchLoading(true);
+      } else {
+        setLoading(true);
+      }
+
       console.log('Fetching events for:', search);
       const url = search
         ? `/api/events?search=${encodeURIComponent(search)}`
@@ -38,22 +43,39 @@ export default function HomePage() {
       const data = await response.json();
 
       if (response.ok) {
-        setEvents(data.events);
-        setFilteredEvents(data.events);
+        setEvents(data.events || []);
+        setError('');
       } else {
         setError(data.error || 'Failed to fetch events');
+        setEvents([]);
       }
     } catch (err) {
       setError('Failed to fetch events');
+      setEvents([]);
       console.error(err);
     } finally {
       setLoading(false);
+      setSearchLoading(false);
     }
   };
 
   const handleSearch = (term: string) => {
     setSearchTerm(term);
+
+    if (term === '') {
+      fetchEvents();
+    }
   };
+
+  const searchInfo = useMemo(() => {
+    if (!searchTerm) return null;
+
+    return {
+      hasResults: events.length > 0,
+      count: events.length,
+      term: searchTerm
+    };
+  }, [events.length, searchTerm]);
 
   if (loading) {
     return (
@@ -73,7 +95,7 @@ export default function HomePage() {
           <p className="text-red-600 mb-4">{error}</p>
           <button
             onClick={() => fetchEvents()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+            className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
           >
             Try Again
           </button>
@@ -84,7 +106,6 @@ export default function HomePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Header */}
       <header className="bg-white shadow-sm border-b">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
           <div className="text-center mb-8">
@@ -97,28 +118,44 @@ export default function HomePage() {
           </div>
 
           <SearchBar onSearch={handleSearch} />
+
+          {searchLoading && (
+            <div className="flex items-center justify-center mt-4">
+              <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+              <span className="text-sm text-gray-600">Searching...</span>
+            </div>
+          )}
         </div>
       </header>
 
-      {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {searchTerm && (
+        {searchInfo && (
           <div className="mb-6">
-            <p className="text-gray-600">
-              {filteredEvents.length > 0
-                ? `Found ${filteredEvents.length} event${filteredEvents.length === 1 ? '' : 's'} for "${searchTerm}"`
-                : `No events found for "${searchTerm}"`}
-            </p>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-blue-800">
+                {searchInfo.hasResults
+                  ? `Found ${searchInfo.count} event${searchInfo.count === 1 ? '' : 's'} matching "${searchInfo.term}"`
+                  : `No events found for "${searchInfo.term}"`
+                }
+              </p>
+              {searchInfo.hasResults && (
+                <p className="text-blue-600 text-sm mt-1">
+                  Results include matches in titles, descriptions, organizer details, requirements, and more.
+                </p>
+              )}
+            </div>
           </div>
         )}
 
-        {filteredEvents.length === 0 ? (
+        {events.length === 0 ? (
           <div className="text-center py-12">
-            <div className="text-gray-400 text-6xl mb-4">🔍</div>
+            <div className="text-gray-400 text-6xl mb-4">
+              {searchTerm ? '🔍' : '📅'}
+            </div>
             <h3 className="text-xl font-medium text-gray-900 mb-2">
               {searchTerm ? 'No events found' : 'No events available'}
             </h3>
-            <p className="text-gray-600">
+            <p className="text-gray-600 mb-4">
               {searchTerm
                 ? 'Try adjusting your search terms or browse all events'
                 : 'Check back later for new events'}
@@ -126,7 +163,7 @@ export default function HomePage() {
             {searchTerm && (
               <button
                 onClick={() => handleSearch('')}
-                className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
+                className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors"
               >
                 View All Events
               </button>
@@ -134,10 +171,10 @@ export default function HomePage() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredEvents.map((event) => (
+            {events.map((event) => (
               <div
                 key={event._id}
-                className="transition-all duration-300 opacity-100"
+                className="transition-all duration-300 opacity-100 transform hover:scale-105"
               >
                 <EventCard event={event} />
               </div>

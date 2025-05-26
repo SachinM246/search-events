@@ -113,10 +113,8 @@ export default function EventDetailPage() {
                 </div>
             </div>
 
-            {/* Main Content */}
             <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                    {/* Hero Image */}
                     <div className="h-64 bg-gradient-to-br from-blue-400 to-purple-500 relative">
                         <div className="absolute inset-0 bg-black bg-opacity-20"></div>
                         <div className="absolute bottom-6 left-6">
@@ -126,9 +124,7 @@ export default function EventDetailPage() {
                         </div>
                     </div>
 
-                    {/* Content */}
                     <div className="p-8">
-                        {/* Title and Basic Info */}
                         <div className="mb-8">
                             <h1 className="text-3xl font-bold text-gray-900 mb-4">{event.name}</h1>
 
@@ -146,15 +142,12 @@ export default function EventDetailPage() {
                             </div>
                         </div>
 
-                        {/* Description */}
                         <div className="mb-8">
                             <h2 className="text-xl font-semibold text-gray-900 mb-3">About This Event</h2>
                             <p className="text-gray-700 leading-relaxed">{event.description}</p>
                         </div>
 
-                        {/* Event Details Grid */}
                         <div className="grid md:grid-cols-2 gap-8 mb-8">
-                            {/* Left Column */}
                             <div className="space-y-6">
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-900 mb-3">Event Details</h3>
@@ -182,7 +175,6 @@ export default function EventDetailPage() {
                                     </div>
                                 </div>
 
-                                {/* Requirements */}
                                 {event.requirements && event.requirements.length > 0 && (
                                     <div>
                                         <h3 className="text-lg font-semibold text-gray-900 mb-3">What to Bring</h3>
@@ -200,7 +192,6 @@ export default function EventDetailPage() {
                                 )}
                             </div>
 
-                            {/* Right Column */}
                             <div className="space-y-6">
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-900 mb-3">Organizer</h3>
@@ -213,7 +204,6 @@ export default function EventDetailPage() {
                                     </div>
                                 </div>
 
-                                {/* Registration CTA */}
                                 <div className="bg-blue-50 rounded-lg p-6 border border-blue-200">
                                     <h3 className="text-lg font-semibold text-blue-900 mb-2">Ready to Join?</h3>
                                     <p className="text-blue-700 mb-4">
