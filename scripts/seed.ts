@@ -1,7 +1,6 @@
 import 'dotenv/config';
 import dbConnect from '../lib/mongodb';
 import Event from '../models/Event';
-console.log('MONGODB_URI:', process.env.MONGODB_URI);
 
 const sampleEvents = [
   {
