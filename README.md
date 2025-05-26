@@ -1,63 +1,110 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Deep Search Functionality Documentation
 
-## Getting Started
+## Overview
+The search functionality in this application allows users to perform comprehensive searches across various event attributes, including text-based fields and numerical comparisons.
 
-First, run the development server:
+## Implementation Details
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+### 1. Search Bar Component
+- Reusable `SearchBar` component implemented in `components/SearchBar.tsx`
+- Supports real-time search updates
+- Features clear button for resetting search
+- Handles both initial and dynamic search terms
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Database Schema
+- MongoDB schema with text indexing for deep search
+- Fields indexed for text search:
+  - name
+  - type
+  - address
+  - description
+  - organizer
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### 3. Search Algorithm
+- Multi-faceted search approach:
+  - Text-based search using MongoDB's text index
+  - Number extraction for spots remaining
+  - Date-related keyword detection
+  - Weighted scoring system
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 4. Search Features
+- Case-insensitive search
+- Partial word matching
+- Smart number detection for spots remaining
+- Date-related keyword recognition
+- Weighted scoring for better results
 
-## Learn More
+### 5. Search Results Ranking
+- Scoring system based on:
+  - Exact matches in name (7 points)
+  - Type matches (6 points)
+  - Location matches (5 points)
+  - Description matches (4 points)
+  - Requirements matches (4 points)
+  - Spots remaining matches (7 points)
 
-To learn more about Next.js, take a look at the following resources:
+### 6. API Integration
+- `/api/events` endpoint handles search queries
+- Uses MongoDB's text search capabilities
+- Returns sorted results based on scoring system
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### 7. Client-Side Implementation
+- Real-time updates using React's useState
+- Debounced search for better performance
+- Loading states for user feedback
+- Error handling for failed searches
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### 8. Search Performance
+- Optimized with MongoDB text indexes
+- Caching implemented for database connections
+- Efficient scoring calculations
+- Debounced search requests
 
-## Deploy on Vercel
+### 9. Special Features
+- Smart search for spots remaining
+- Date-related keyword detection
+- Type-ahead suggestions
+- Clear search functionality
+- Loading states
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 10. Error Handling
+- Graceful error handling
+- User-friendly error messages
+- Retry mechanisms
+- Loading states
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### 11. UI/UX Considerations
+- Responsive design
+- Clear visual feedback
+- Loading indicators
+- Error messages
+- Clear button
+- Form validation
 
-project structure-
- search-events/
-// ├── app/
-// │   ├── api/
-// │   │   └── events/
-// │   │       ├── route.ts
-// │   │       └── [id]/
-// │   │           └── route.ts
-// │   ├── events/
-// │   │   └── [id]/
-// │   │       └── page.tsx
-// │   └── page.tsx
-// ├── components/
-// │   ├── EventCard.tsx
-// │   └── SearchBar.tsx
-// ├── lib/
-// │   └── mongodb.ts
-// ├── models/
-// │   └── Event.ts
-// ├── scripts/
-// │   └── seed.ts
-// ├── types/              ← CREATE THIS FOLDER
-// │   └── global.d.ts     ← CREATE THIS FILE
-// ├── .env.local
-// ├── package.json
-// └── tsconfig.json
+### 12. Security
+- Input sanitization
+- Rate limiting
+- Secure database connections
+- Proper error handling
+
+## Usage
+1. Enter search terms in the search bar
+2. Results update in real-time
+3. Clear button available for resetting
+4. Results sorted by relevance score
+5. Loading states during search
+
+## Technical Notes
+- MongoDB version: 8.x
+- Next.js version: 15.3.2
+- TypeScript support
+- Tailwind CSS for styling
+- Client-side rendering for real-time updates
+
+## Future Enhancements
+- Additional search filters
+- Advanced search options
+- Search history
+- Saved searches
+- More sophisticated scoring
+- Location-based search improvements
